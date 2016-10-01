@@ -12,7 +12,7 @@ function MusicController() {
   this.patternPosition = 0;
 
   this.mVoice = 64; //temporarily for testing
-  this.tVoice = 68;
+  this.tVoice = 67;
   this.tVoicePattern = [3, 4, 5];
   this.tVoicePatternPosition = 1;
 }
