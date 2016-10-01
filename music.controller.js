@@ -49,7 +49,7 @@ MusicController.prototype.handleTouchEvent = function() {
   }.bind(this), 250);
 
   //tVoice
-  if (this.mVoice = -1) {
+  if (this.mVoice === -1) {
     this.mVoice = this.rootNote + this.tVoicePattern[this.tVoicePatternPosition % 3];
     this.tVoicePatternPosition += 1;
   }
