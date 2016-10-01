@@ -12,10 +12,9 @@ function MusicController() {
   this.mVoice = -1;
   this.tVoice = -1;
   this.tVoicePattern = [3, 4, 5];
-  this.tVoicePatternPosition = 1;
-
-  this.mOff;
-  this.tOff;
+  this.tVoicePatternPosition = 0;
+  this.mOff = 0;
+  this.tOff = 0;
 }
 
 MusicController.prototype.handleMidiEvent = function(deltaTime, message) {
@@ -41,30 +40,27 @@ MusicController.prototype.handleTouchEvent = function() {
     this.mVoice = this.mVoice + this.pattern[this.patternPosition % 2];
   }
   this.patternPosition += 1;
-  clearTimeout(this.mOff);
+  // clearTimeout(this.mOff);
   cv.sendMessage([147, this.mVoice, 1]);
-  this.mOff = setTimeout(function(){
-    cv.sendMessage([147, this.mVoice, 0]);
-    console.log("M VOICE CANCEL");
-  }.bind(this), 250);
+  this.mOff = setTimeout(function(note){
+    cv.sendMessage([147, note, 0]);
+  }.bind(this, this.mVoice), 250);
+  console.log(this.mVoice);
 
   //tVoice
-  if (this.mVoice === -1) {
-    this.mVoice = this.rootNote + this.tVoicePattern[this.tVoicePatternPosition % 3];
+  if (this.tVoice === -1) {
+    this.tVoice = this.rootNote + this.tVoicePattern[this.tVoicePatternPosition % 3];
     this.tVoicePatternPosition += 1;
   }
   if (this.mVoice % 12 === this.tVoice % 12) {
     this.tVoice = this.tVoice + this.tVoicePattern[this.tVoicePatternPosition % 3];
     this.tVoicePatternPosition += 1;
   }
-  clearTimeout(this.tOff);
+  // clearTimeout(this.tOff);
   cv.sendMessage([146, this.tVoice, 1]);
-  setTimeout(function(){
-    cv.sendMessage([146, this.tVoice, 0]);
-    console.log("T VOICE CANCEL");
-  }.bind(this), 250);
-
-  console.log(this.mVoice);
+  this.tOff = setTimeout(function(note){
+    cv.sendMessage([146, note, 0]);
+  }.bind(this, this.tVoice), 250);
   console.log(this.tVoice);
 };
 
