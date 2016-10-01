@@ -17,6 +17,10 @@ function MusicController() {
   this.tOff = 0;
 }
 
+MusicController.scale = function(note) {
+  return (note % 12) + 48;
+}
+
 MusicController.prototype.handleMidiEvent = function(deltaTime, message) {
   if(message[2] != 0 && message[1] != this.lastRoot){
     this.rootDirection = message[1] > rootNote ? 1 : -1;
@@ -37,26 +41,32 @@ MusicController.prototype.handleTouchEvent = function() {
   if (this.mVoice === -1) {
     this.mVoice = this.rootNote;
   } else {
-    this.mVoice = this.mVoice + this.pattern[this.patternPosition % 2];
+    this.mVoice = this.mVoice + this.pattern[this.patternPosition % this.pattern.length];
   }
   this.patternPosition += 1;
-  // clearTimeout(this.mOff);
+
+  //tVoice
+  if (this.tVoice === -1) {
+    this.tVoice = this.rootNote + this.tVoicePattern[this.tVoicePatternPosition % this.tVoicePattern.length];
+    this.tVoicePatternPosition += 1;
+  }
+  if (this.mVoice % 12 === this.tVoice % 12) {
+    this.tVoice = this.tVoice + this.tVoicePattern[this.tVoicePatternPosition % this.tVoicePattern.length];
+    this.tVoicePatternPosition += 1;
+  }
+
+  console.log("pre scale m: " + this.mVoice);
+  console.log("pre scale t: " + this.tVoice);
+
+  this.mVoice = MusicController.scale(this.mVoice) ; //scales it 
+  this.tVoice = MusicController.scale(this.tVoice);
+
   cv.sendMessage([147, this.mVoice, 1]);
   this.mOff = setTimeout(function(note){
     cv.sendMessage([147, note, 0]);
   }.bind(this, this.mVoice), 250);
   console.log(this.mVoice);
 
-  //tVoice
-  if (this.tVoice === -1) {
-    this.tVoice = this.rootNote + this.tVoicePattern[this.tVoicePatternPosition % 3];
-    this.tVoicePatternPosition += 1;
-  }
-  if (this.mVoice % 12 === this.tVoice % 12) {
-    this.tVoice = this.tVoice + this.tVoicePattern[this.tVoicePatternPosition % 3];
-    this.tVoicePatternPosition += 1;
-  }
-  // clearTimeout(this.tOff);
   cv.sendMessage([146, this.tVoice, 1]);
   this.tOff = setTimeout(function(note){
     cv.sendMessage([146, note, 0]);
