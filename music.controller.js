@@ -4,12 +4,17 @@ var oxygen = require('./midi.controller.js').oxygen;
 function MusicController() {
   // this.rootNote = -1;
   this.rootNote = 64; //temporarility for testing
+  this.currentNote = 64; //temporarily for testing
   this.lastRoot = -1;
   this.rootDirection = 0; //-1: decreasing, 0: not set, 1: increasing
   this.modes = [1, -1, 0];//increasing, decreasing, alternating
   this.pattern = [2, -1];
   this.patternPosition = 0;
-  this.currentNote = 64; //temporarily for testing
+
+  this.mVoice = 64; //temporarily for testing
+  this.tVoice = 68;
+  this.tVoicePattern = [3, 4, 5];
+  this.tVoicePatternPosition = 1;
 }
 
 MusicController.prototype.handleMidiEvent = function(deltaTime, message) {
@@ -24,11 +29,20 @@ MusicController.prototype.handleMidiEvent = function(deltaTime, message) {
 };
 
 MusicController.prototype.handleTouchEvent = function() {
-  this.currentNote = this.currentNote + this.pattern[this.patternPosition % 2];
+  this.mVoice = this.mVoice + this.pattern[this.patternPosition % 2];
   this.patternPosition += 1;
-  cv.sendMessage([147, this.currentNote, 1]);
+  cv.sendMessage([147, this.mVoice, 1]);
   setTimeout(function(){
-    cv.sendMessage([147, this.currentNote, 0]);
+    cv.sendMessage([147, this.mVoice, 0]);
+  }.bind(this), 250);
+
+  //tVoice
+  if (this.mVoice % 12 === this.tVoice % 12) {
+    this.tVoice = this.tVoice + this.tVoicePattern[this.tVoicePatternPosition % 3];
+  }
+  cv.sendMessage([146, this.tVoice, 1]);
+  setTimeout(function(){
+    cv.sendMessage([146, this.tVoice, 0]);
   }.bind(this), 250);
 };
 
