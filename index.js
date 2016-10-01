@@ -1,41 +1,21 @@
-// var WebSocketServer = require("websocket").server;
-// var http = require("http");
+var express = require('express');
+var app = express();
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
 
-// var server = http.createServer(function(request, response) {
-//   console.log(new Date() + " Received request for " + request.url);
-//   response.writeHead(404);
-//   response.end();
-// });
+app.use(express.static('public'));
+server.listen(8080);
 
-// server.listen(8080, function() {
-//   console.log((new Date()) + ' Server is listening on port 8080');
-// });
+app.get('/', function (req, res) {
+  res.sendfile(__dirname + '/index.html');
+});
 
-// wsServer = new WebSocketServer({
-//   httpServer: server,
-//   autoAcceptConnections: false
-// });
-
-// function originIsAllowed(origin) {
-//   return true;
-// }
-
-// wsServer.on("request", function(request) {
-//   if(!originIsAllowed(request.origin)) {
-//     request.reject();
-//     console.log((new Date()) + ' Connection from origin ' + request.origin + ' rejected.');
-//     return;
-//   }
-
-//   var connection = request.accept("echo-protocol", request.origin);
-//   console.log((new Date()) + ' Connection accepted.');
-//   connection.on("message", function(message) {
-//     if(message.type === "utf8") {
-
-      
-//     }
-//   })
-// })
+io.on('connection', function (socket) {
+  console.log('connection');
+  socket.on('touch', function (data) {
+    console.log('touch event');
+  });
+});
 
 //output.sendMessage([145,64,1]);
 //[status code, note, on/off]
