@@ -46,20 +46,47 @@
 //147 for osc 2
 
 var midi = require("midi");
+var oxygen = new midi.input();
+var cv = new midi.output();
 
-var input = new midi.input();
+var rootNote = -1;
+var lastRoot = -1;
+var rootDirection = 0; //-1: decreasing, 0: not set, 1: increasing
+var modes = [1, -1, 0];//increasing, decreasing, alternating
 
-input.on('message', function(deltaTime, message) {
-  // The message is an array of numbers corresponding to the MIDI bytes: 
-  //   [status, data1, data2] 
-  // https://www.cs.cf.ac.uk/Dave/Multimedia/node158.html has some helpful 
-  // information interpreting the messages. 
-  console.log('m:' + message + ' d:' + deltaTime);
+midi.input.prototype.openPortByName = function(name){
+  for(var i = 0; i < this.getPortCount(); i ++){
+    if(this.getPortName(i) == name){
+      this.openPort(i);
+      return;
+    }
+  }
+};
+
+midi.output.prototype.openPortByName = function(name){
+  for(var i = 0; i < this.getPortCount(); i ++){
+    if(this.getPortName(i) == name){
+      this.openPort(i);
+      return;
+    }
+  }
+};
+
+function getNote(){
+  
+}
+
+oxygen.on('message', function(deltaTime, message) {
+  if(message[2] != 0 && message[1] != lastRoot){
+    rootDirection = message[1] > rootNote ? 1 : -1;
+    lastRoot = rootNote;
+    rootNote = message[1];
+    var interval = rootNote - lastRoot;
+    lastRoot = message[1];
+    console.log(interval);
+  }
 });
 
-for(var i = 0; i < input.getPortCount(); i ++){
-  if(input.getPortName(i) == "USB Oxygen 8 v2"){
-    input.openPort(i);
-    return;
-  }
-}
+oxygen.openPortByName("USB Oxygen 8 v2");
+cv.openPortByName("CVpal");
+
