@@ -1,4 +1,4 @@
-var cv = require('midi.controller.js').cv;
+var cv = require('./midi.controller.js').cv;
 
 function MusicController() {
   // this.rootNote = -1;

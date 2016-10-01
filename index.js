@@ -3,8 +3,8 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
-require('midi.controller.js');
-var musicController = require('music.controller.js');
+require('./midi.controller.js');
+var musicController = require('./music.controller.js');
 
 app.use(express.static('public'));
 server.listen(8080);

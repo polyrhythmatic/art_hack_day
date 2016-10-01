@@ -10,7 +10,7 @@ var midi = require("midi");
 var oxygen = new midi.input();
 var cv = new midi.output();
 
-var musicController = require('music.controller.js');
+var musicController = require('./music.controller.js');
 
 midi.input.prototype.openPortByName = function(name){
   for(var i = 0; i < this.getPortCount(); i ++){
