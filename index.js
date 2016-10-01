@@ -4,7 +4,7 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
 var oxygen = require('./midi.controller.js').oxygen;
-var cv = require('./midi.controller.js').oxygen;
+var cv = require('./midi.controller.js').cv;
 var musicController = require('./music.controller.js');
 
 oxygen.openPortByName("USB Oxygen 8 v2");
