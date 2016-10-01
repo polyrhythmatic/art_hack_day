@@ -14,6 +14,10 @@ io.on('connection', function (socket) {
   console.log('connection');
   socket.on('touch', function (data) {
     console.log('touch event');
+    cv.sendMessage([147, 64, 1]);
+    setTimeout(function(){
+      cv.sendMessage([147, 64, 0]);
+    }, 250);
   });
 });
 
@@ -26,9 +30,9 @@ io.on('connection', function (socket) {
 //147 for osc 2
 
 var midi = require("midi");
+
 var oxygen = new midi.input();
 var cv = new midi.output();
-
 var rootNote = -1;
 var lastRoot = -1;
 var rootDirection = 0; //-1: decreasing, 0: not set, 1: increasing
@@ -41,6 +45,7 @@ midi.input.prototype.openPortByName = function(name){
       return;
     }
   }
+  console.error("No midi port named " + name);
 };
 
 midi.output.prototype.openPortByName = function(name){
@@ -50,11 +55,17 @@ midi.output.prototype.openPortByName = function(name){
       return;
     }
   }
+  console.error("No midi port named " + name);
 };
 
-function getNote(){
-  
-}
+// var index = 0
+// var tVoice = [];
+// var mVoice = [];
+// function getNote(note){
+//   var zNote = note % 12;
+//   var octave = note / 12;
+
+// }
 
 oxygen.on('message', function(deltaTime, message) {
   if(message[2] != 0 && message[1] != lastRoot){

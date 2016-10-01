@@ -11,7 +11,8 @@
   "dependencies": {
     "express": "^4.14.0",
     "midi": "^0.9.5",
-    "tone": "^0.7.1",
     "socket.io": "^1.4.8",
+    "teoria": "^2.2.0",
+    "tone": "^0.7.1"
   }
 }
