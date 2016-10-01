@@ -46,6 +46,10 @@ oxygen.on('message', musicController.handleMidiEvent);
 oxygen.openPortByName("USB Oxygen 8 v2");
 cv.openPortByName("CVpal");
 
+function sendMessage(args) {
+  cv.sendMessage(args);
+}
+
 module.exports = {
-  cv: cv
+  sendMessage: sendMessage
 };
