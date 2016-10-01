@@ -15,6 +15,9 @@ function MusicController() {
   this.tVoice = 67;
   this.tVoicePattern = [3, 4, 5];
   this.tVoicePatternPosition = 1;
+
+  this.mOff;
+  this.tOff;
 }
 
 MusicController.prototype.handleMidiEvent = function(deltaTime, message) {
@@ -31,19 +34,26 @@ MusicController.prototype.handleMidiEvent = function(deltaTime, message) {
 MusicController.prototype.handleTouchEvent = function() {
   this.mVoice = this.mVoice + this.pattern[this.patternPosition % 2];
   this.patternPosition += 1;
+  clearTimeout(this.mOff);
   cv.sendMessage([147, this.mVoice, 1]);
-  setTimeout(function(){
+  this.mOff = setTimeout(function(){
     cv.sendMessage([147, this.mVoice, 0]);
+    console.log("M VOICE CANCEL");
   }.bind(this), 250);
 
   //tVoice
   if (this.mVoice % 12 === this.tVoice % 12) {
     this.tVoice = this.tVoice + this.tVoicePattern[this.tVoicePatternPosition % 3];
   }
+  clearTimeout(this.tOff);
   cv.sendMessage([146, this.tVoice, 1]);
   setTimeout(function(){
     cv.sendMessage([146, this.tVoice, 0]);
+    console.log("T VOICE CANCEL");
   }.bind(this), 250);
+
+  console.log(this.mVoice);
+  console.log(this.tVoice);
 };
 
 module.exports = new MusicController();
