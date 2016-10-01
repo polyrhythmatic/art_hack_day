@@ -7,6 +7,7 @@ function MusicController() {
   this.lastRoot = -1;
   this.rootDirection = 0; //-1: decreasing, 0: not set, 1: increasing
   this.modes = [1, -1, 0];//increasing, decreasing, alternating
+
   this.pattern = [2, -1];
   this.patternPosition = 0;
   this.mVoice = -1;
@@ -15,6 +16,17 @@ function MusicController() {
   this.tVoicePatternPosition = 0;
   this.mOff = 0;
   this.tOff = 0;
+
+  this.currentPattern = 0;
+  this.mPatterns = [
+    [2, -1],
+    [-2, 1]
+  ];
+
+  this.tPatterns = [
+    [3, 4, 5],
+    [-3, -5, -4]
+  ];
 }
 
 MusicController.scale = function(note) {
@@ -72,6 +84,12 @@ MusicController.prototype.handleTouchEvent = function() {
     cv.sendMessage([146, note, 0]);
   }.bind(this, this.tVoice), 250);
   console.log(this.tVoice);
+};
+
+MusicController.prototype.changeMelodyPattern = function() {
+  this.currentPattern = (this.currentPattern + 1) % this.mPatterns.length;
+  this.pattern = this.mPatterns[this.currentPattern];
+  this.tVoicePattern = this.tPatterns[this.currentPattern];
 };
 
 module.exports = new MusicController();
