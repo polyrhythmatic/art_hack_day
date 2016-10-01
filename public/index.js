@@ -1,5 +1,5 @@
-var socket = io('http://localhost');
+var socket = io();
 
-body.ontouchstart = body.onclick = function(event) {
+document.body.ontouchstart = document.body.onclick = function(event) {
   socket.emit("touch");
 }
