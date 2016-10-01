@@ -10,8 +10,6 @@ var midi = require("midi");
 var oxygen = new midi.input();
 var cv = new midi.output();
 
-var musicController = require('./music.controller.js');
-
 midi.input.prototype.openPortByName = function(name){
   for(var i = 0; i < this.getPortCount(); i ++){
     if(this.getPortName(i) == name){
@@ -41,15 +39,7 @@ midi.output.prototype.openPortByName = function(name){
 
 // }
 
-oxygen.on('message', musicController.handleMidiEvent);
-
-oxygen.openPortByName("USB Oxygen 8 v2");
-cv.openPortByName("CVpal");
-
-function sendMessage(args) {
-  cv.sendMessage(args);
-}
-
 module.exports = {
-  sendMessage: sendMessage
+  cv: cv,
+  oxygen: oxygen
 };

@@ -1,4 +1,5 @@
-var sendMessage = require('./midi.controller.js').sendMessage;
+var cv = require('./midi.controller.js').cv;
+var oxygen = require('./midi.controller.js').oxygen;
 
 function MusicController() {
   // this.rootNote = -1;
@@ -25,9 +26,9 @@ MusicController.prototype.handleMidiEvent = function(deltaTime, message) {
 MusicController.prototype.handleTouchEvent = function() {
   this.currentNote = this.rootNote + this.pattern[this.patternPosition % 2];
   this.patternPosition += 1;
-  sendMessage([147, this.currentNote, 1]);
+  cv.sendMessage([147, this.currentNote, 1]);
   setTimeout(function(){
-    sendMessage([147, this.currentNote, 0]);
+    cv.sendMessage([147, this.currentNote, 0]);
   }, 250);
 };
 

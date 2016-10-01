@@ -3,8 +3,14 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
-require('./midi.controller.js');
+var oxygen = require('./midi.controller.js').oxygen;
+var cv = require('./midi.controller.js').oxygen;
 var musicController = require('./music.controller.js');
+
+oxygen.openPortByName("USB Oxygen 8 v2");
+cv.openPortByName("CVpal");
+
+oxygen.on('message', musicController.handleMidiEvent);
 
 app.use(express.static('public'));
 server.listen(8080);
