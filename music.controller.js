@@ -12,7 +12,7 @@ function MusicController() {
   this.mVoice = -1;
   this.tVoice = -1;
   this.tVoicePattern = [3, 4, 5];
-  this.tVoicePatternPosition = 1;
+  this.tVoicePatternPosition = 0;
 }
 
 MusicController.prototype.handleMidiEvent = function(deltaTime, message) {
@@ -42,10 +42,11 @@ MusicController.prototype.handleTouchEvent = function() {
   setTimeout(function(){
     cv.sendMessage([147, this.mVoice, 0]);
   }.bind(this), 250);
+  console.log(this.mVoice);
 
   //tVoice
-  if (this.mVoice === -1) {
-    this.mVoice = this.rootNote + this.tVoicePattern[this.tVoicePatternPosition % 3];
+  if (this.tVoice === -1) {
+    this.tVoice = this.rootNote + this.tVoicePattern[this.tVoicePatternPosition % 3];
     this.tVoicePatternPosition += 1;
   }
   if (this.mVoice % 12 === this.tVoice % 12) {
@@ -56,6 +57,7 @@ MusicController.prototype.handleTouchEvent = function() {
   setTimeout(function(){
     cv.sendMessage([146, this.tVoice, 0]);
   }.bind(this), 250);
+  console.log(this.tVoice);
 };
 
 module.exports = new MusicController();
