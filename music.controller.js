@@ -29,7 +29,7 @@ MusicController.prototype.handleTouchEvent = function() {
   cv.sendMessage([147, this.currentNote, 1]);
   setTimeout(function(){
     cv.sendMessage([147, this.currentNote, 0]);
-  }, 250);
+  }.bind(this), 250);
 };
 
 module.exports = new MusicController();
