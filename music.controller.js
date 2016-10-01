@@ -4,15 +4,13 @@ var oxygen = require('./midi.controller.js').oxygen;
 function MusicController() {
   // this.rootNote = -1;
   this.rootNote = 64; //temporarility for testing
-  this.currentNote = 64; //temporarily for testing
   this.lastRoot = -1;
   this.rootDirection = 0; //-1: decreasing, 0: not set, 1: increasing
   this.modes = [1, -1, 0];//increasing, decreasing, alternating
   this.pattern = [2, -1];
   this.patternPosition = 0;
-
-  this.mVoice = 64; //temporarily for testing
-  this.tVoice = 67;
+  this.mVoice = -1;
+  this.tVoice = -1;
   this.tVoicePattern = [3, 4, 5];
   this.tVoicePatternPosition = 1;
 
@@ -28,11 +26,20 @@ MusicController.prototype.handleMidiEvent = function(deltaTime, message) {
     var interval = rootNote - lastRoot;
     this.lastRoot = message[1];
     console.log(interval);
+
+    this.mVoice = -1;
+    this.tVoice = -1;
+    this.patternPosition = 0;
+    this.tVoicePatternPosition = 0;
   }
 };
 
 MusicController.prototype.handleTouchEvent = function() {
-  this.mVoice = this.mVoice + this.pattern[this.patternPosition % 2];
+  if (this.mVoice === -1) {
+    this.mVoice = this.rootNote;
+  } else {
+    this.mVoice = this.mVoice + this.pattern[this.patternPosition % 2];
+  }
   this.patternPosition += 1;
   clearTimeout(this.mOff);
   cv.sendMessage([147, this.mVoice, 1]);
@@ -42,8 +49,13 @@ MusicController.prototype.handleTouchEvent = function() {
   }.bind(this), 250);
 
   //tVoice
+  if (this.mVoice = -1) {
+    this.mVoice = this.rootNote + this.tVoicePattern[this.tVoicePatternPosition % 3];
+    this.tVoicePatternPosition += 1;
+  }
   if (this.mVoice % 12 === this.tVoice % 12) {
     this.tVoice = this.tVoice + this.tVoicePattern[this.tVoicePatternPosition % 3];
+    this.tVoicePatternPosition += 1;
   }
   clearTimeout(this.tOff);
   cv.sendMessage([146, this.tVoice, 1]);
