@@ -3,7 +3,7 @@ var oxygen = require('./midi.controller.js').oxygen;
 
 function MusicController() {
   // this.rootNote = -1;
-  this.rootNote = 64; //temporarility for testing
+  this.rootNote = 60; //temporarility for testing
   this.lastRoot = -1;
   this.rootDirection = 0; //-1: decreasing, 0: not set, 1: increasing
   this.modes = [1, -1, 0];//increasing, decreasing, alternating
@@ -25,8 +25,16 @@ function MusicController() {
 
   this.tPatterns = [
     [3, 4, 5],
-    [-3, -5, -4]
+    [-3, -5, -4],
   ];
+
+  this.tModes = [
+    "above",
+    "below",
+    "alternating"
+  ];
+
+  this.tMode = "below";
 }
 
 MusicController.scale = function(note) {
@@ -50,6 +58,12 @@ MusicController.prototype.handleMidiEvent = function(deltaTime, message) {
 };
 
 MusicController.prototype.handleTouchEvent = function() {
+  //for alternating, need to figure out whether it's above or below here
+  var alternatingMode;
+  if (this.tMode === "alternating") {
+    alternatingMode = this.mVoice > this.tVoice ? "above" : "below";
+  }
+
   if (this.mVoice === -1) {
     this.mVoice = this.rootNote;
   } else {
@@ -57,21 +71,63 @@ MusicController.prototype.handleTouchEvent = function() {
   }
   this.patternPosition += 1;
 
-  //tVoice
-  if (this.tVoice === -1) {
-    this.tVoice = this.rootNote + this.tVoicePattern[this.tVoicePatternPosition % this.tVoicePattern.length];
-    this.tVoicePatternPosition += 1;
-  }
-  if (this.mVoice % 12 === this.tVoice % 12) {
-    this.tVoice = this.tVoice + this.tVoicePattern[this.tVoicePatternPosition % this.tVoicePattern.length];
-    this.tVoicePatternPosition += 1;
-  }
-
-  console.log("pre scale m: " + this.mVoice);
-  console.log("pre scale t: " + this.tVoice);
-
   this.mVoice = MusicController.scale(this.mVoice) ; //scales it 
-  this.tVoice = MusicController.scale(this.tVoice);
+
+  //to calculate tvoice
+  var mVoice0 = this.mVoice % 12;
+  var octave = Math.floor(this.mVoice / 12);
+  var root0 = this.rootNote % 12;
+
+  if (this.tMode === "above" || alternatingMode === "above") {
+    if (root0 - 12 > mVoice0) {
+      this.tVoice = root0 - 12 + (octave*12);
+    } else if (root0 - 9 > mVoice0 ) {
+      this.tVoice = root0 - 9 + (octave*12); 
+    } else if (root0 - 5 > mVoice0) {
+      this.tVoice = root0 - 5 + (octave*12); 
+    } else if (root0 > mVoice0) {
+      this.tVoice = root0 + (octave*12); 
+    } else if (root0 + 3 > mVoice0) {
+      this.tVoice = root0 + 3 + (octave*12); 
+    } else if (root0 + 7 > mVoice0 ) {
+      this.tVoice = root0 + 7 + (octave*12); 
+    } else if (root0 + 12 > mVoice0 ) {
+      this.tVoice = root0 + 12 + (octave*12); 
+    }
+  } else {
+    if (root0 + 12 < mVoice0) {
+      this.tVoice = root0 + 12 + (octave*12); 
+    } else if (root0 + 7 < mVoice0) {
+      this.tVoice = root0 + 7 + (octave*12); 
+    } else if (root0 + 3 < mVoice0) {
+      this.tVoice = root0 + 3 + (octave*12); 
+    } else if (root0 < mVoice0) {
+      this.tVoice = root0 + (octave*12); 
+    } else if (root0 - 5 < mVoice0) {
+      this.tVoice = root0 - 5 + (octave*12); 
+    } else if (root0 - 9 < mVoice0 ) {
+      this.tVoice = root0 - 9 + (octave*12); 
+    } else if (root0 - 12 < mVoice0 ) {
+      this.tVoice = root0 - 12 + (octave*12); 
+    }
+  }
+
+
+
+  //tVoice
+  //assume above
+
+
+  // if (this.tVoice === -1) {
+  //   this.tVoice = this.rootNote + this.tVoicePattern[this.tVoicePatternPosition % this.tVoicePattern.length];
+  //   this.tVoicePatternPosition += 1;
+  // }
+  // if (this.mVoice % 12 === this.tVoice % 12) {
+  //   this.tVoice = this.tVoice + this.tVoicePattern[this.tVoicePatternPosition % this.tVoicePattern.length];
+  //   this.tVoicePatternPosition += 1;
+  // }
+
+  // this.tVoice = MusicController.scale(this.tVoice);
 
   cv.sendMessage([147, this.mVoice, 1]);
   this.mOff = setTimeout(function(note){
@@ -89,7 +145,6 @@ MusicController.prototype.handleTouchEvent = function() {
 MusicController.prototype.changeMelodyPattern = function() {
   this.currentPattern = (this.currentPattern + 1) % this.mPatterns.length;
   this.pattern = this.mPatterns[this.currentPattern];
-  this.tVoicePattern = this.tPatterns[this.currentPattern];
 };
 
 module.exports = new MusicController();
