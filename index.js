@@ -46,15 +46,20 @@ app.get('/', function (req, res) {
   //look at the number of users doing each thing and redirect them accordingly
 
   //if there are fewer instrument users than modular controller users
+  console.log('instrument users: ', instrumentUsers.length);
+  console.log('progression users: ', progressionUsers.length);
+  console.log('mpattern users: ', mpatternUsers.length);
+  console.log('tpattern users: ', tpatternUsers.length);
+  console.log('notelength users: ', notelengthUsers.length);
   if (instrumentUsers.length <= (progressionUsers.length + mpatternUsers.length + tpatternUsers.length + notelengthUsers.length)
     && req.session.lastPage !== '/instrument') {
     res.redirect('/instrument');
   } else {
-    if (notelengthUsers.length === progressionUsers.length && req.session.lastPage !== '/progression') {
+    if (progressionUsers.length <= notelengthUsers.length && req.session.lastPage !== '/progression') {
       res.redirect('/progression');
-    } else if (mpatternUsers.length === notelengthUsers.length && req.session.lastPage !== '/mpattern') {
+    } else if (mpatternUsers.length <= notelengthUsers.length && req.session.lastPage !== '/mpattern') {
       res.redirect('/mpattern');
-    } else if (tpatternUsers.length === notelengthUsers.length && req.session.lastPage !== '/tpattern') {
+    } else if (tpatternUsers.length <= notelengthUsers.length && req.session.lastPage !== '/tpattern') {
       res.redirect('/tpattern');
     } else if (req.session.lastPage !== '/notelength') {
       res.redirect('/notelength');
@@ -133,13 +138,14 @@ io.on('connection', function (socket) {
   } else if (socket.handshake.session.lastPage === '/progression') {
     progressionUsers.push(socket.id);
   } else if (socket.handshake.session.lastPage === '/mpattern') {
-    socket.broadcast.emit('set mpattern', { patternIndex: musicController.getSelectedMPattern() });
+    io.sockets.emit('set mpattern', { patternIndex: musicController.getSelectedMPattern() });
     mpatternUsers.push(socket.id);
   } else if (socket.handshake.session.lastPage === '/tpattern') {
-    socket.broadcast.emit('set tpattern', { patternIndex: musicController.getSelectedTPattern() });
+    console.log('emitting set tpattern');
+    io.sockets.emit('set tpattern', { patternIndex: musicController.getSelectedTPattern() });
     tpatternUsers.push(socket.id);
   } else if (socket.handshake.session.lastPage === '/notelength') {
-    socket.broadcast.emit('set notelength', { notelength: musicController.getNoteLength() });
+    io.sockets.emit('set notelength', { notelength: musicController.getNoteLength() });
     notelengthUsers.push(socket.id);
   }
 
@@ -151,17 +157,17 @@ io.on('connection', function (socket) {
 
   socket.on('change melody pattern', function() {
     musicController.changeMelodyPattern();
-    socket.broadcast.emit('set mpattern', {patternIndex: musicController.getSelectedMPattern()});
+    io.sockets.emit('set mpattern', {patternIndex: musicController.getSelectedMPattern()});
   });
 
   socket.on('change t-voice mode', function() {
     musicController.changeTVoicePattern();
-    socket.broadcast.emit('set tpattern', {patternIndex: musicController.getSelectedTPattern()});
+    io.sockets.emit('set tpattern', {patternIndex: musicController.getSelectedTPattern()});
   });
 
   socket.on('change note length', function(value) {
     musicController.setNoteLength(value);
-    socket.broadcast.emit('set notelength', { notelength: value });
+    io.sockets.emit('set notelength', { notelength: value });
   });
 
   socket.on('get time', function(){

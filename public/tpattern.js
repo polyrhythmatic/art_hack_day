@@ -4,6 +4,7 @@ var tpatternButton = document.getElementById('tpattern');
 var tpatternOptions = document.getElementById('tpattern-options');
 
 socket.on('set tpattern', function(data) {
+  console.log('receive set tpattern');
   tpatternOptions.className = "tpattern-options pattern-" + data.patternIndex;
 });
 
