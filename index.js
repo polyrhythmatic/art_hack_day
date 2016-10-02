@@ -2,6 +2,12 @@ var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+var Session = require('express-session');
+var SessionStore = require('session-file-store')(Session);
+var session = Session({store: new SessionStore({path: __dirname+'/tmp/sessions'}), secret: 'pass', resave: true, saveUninitialized: true});
+var cookieParser = require('cookie-parser');
+var ios = require('socket.io-express-session');
+var path = require('path');
 
 var oxygen = require('./midi.controller.js').oxygen;
 var cv = require('./midi.controller.js').cv;
@@ -15,10 +21,26 @@ cv.openPortByName("CVpal");
 oxygen.on('message', musicController.handleMidiEvent);
 
 app.use(express.static('public'));
+app.use(cookieParser());
+app.use(session);
+io.use(ios(session));
+
 server.listen(8080);
 
 app.get('/', function (req, res) {
-  res.sendfile(__dirname + '/index.html');
+  if (!req.session.uid) {
+    req.session.uid = Date.now();
+  }
+  req.session.lastPage = '/';
+  if (userConnections.length % 2 === 0) {
+    res.redirect('/test');
+  } else {
+    res.sendFile(path.resolve(__dirname + '/index.html'));
+  }
+});
+
+app.get('/test', function (req, res) {
+  res.sendFile(path.resolve(__dirname + '/index.html'));
 });
 
 io.on('connection', function (socket) {
