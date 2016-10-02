@@ -20,6 +20,7 @@ var progressionUsers = [];
 var mpatternUsers = [];
 var tpatternUsers = [];
 var notelengthUsers = [];
+var densityUsers = [];
 
 oxygen.openPortByName("USB Oxygen 8 v2");
 cv.openPortByName("CVpal");
@@ -51,7 +52,7 @@ app.get('/', function (req, res) {
   console.log('mpattern users: ', mpatternUsers.length);
   console.log('tpattern users: ', tpatternUsers.length);
   console.log('notelength users: ', notelengthUsers.length);
-  if (instrumentUsers.length <= (progressionUsers.length + mpatternUsers.length + tpatternUsers.length + notelengthUsers.length)
+  if (instrumentUsers.length <= (progressionUsers.length + mpatternUsers.length + tpatternUsers.length + notelengthUsers.length + densityUsers.length)
     && req.session.lastPage !== '/instrument') {
     res.redirect('/instrument');
   } else {
@@ -61,6 +62,8 @@ app.get('/', function (req, res) {
       res.redirect('/mpattern');
     } else if (tpatternUsers.length <= notelengthUsers.length && req.session.lastPage !== '/tpattern') {
       res.redirect('/tpattern');
+    } else if (densityUsers.length <= notelengthUsers.length && req.session.lastPage !== '/density') {
+      res.redirect('/density');
     } else if (req.session.lastPage !== '/notelength') {
       res.redirect('/notelength');
     } else {
@@ -125,6 +128,16 @@ app.get('/notelength', function(req, res) {
   res.sendFile(path.resolve(__dirname + '/notelength.html'));
 });
 
+app.get('/density', function(req, res) {
+  // this is a slider that changes the note length
+  if (req.session.lastPage === '/density') {
+    res.redirect('/');
+    return;
+  }
+  req.session.lastPage = '/density';
+  res.sendFile(path.resolve(__dirname + '/density.html'));
+});
+
 app.get('/phoneplayer', function (req, res) {
   res.sendfile(__dirname + '/phoneplayer.html');
 });
@@ -147,6 +160,9 @@ io.on('connection', function (socket) {
   } else if (socket.handshake.session.lastPage === '/notelength') {
     io.sockets.emit('set notelength', { notelength: musicController.getNoteLength() });
     notelengthUsers.push(socket.id);
+  } else if (socket.handshake.session.lastPage === '/density') {
+    io.sockets.emit('set density', { density: musicController.getDensity() });
+    densityUsers.push(socket.id);
   }
 
   //emit event based on number of users
@@ -168,6 +184,11 @@ io.on('connection', function (socket) {
   socket.on('change note length', function(value) {
     musicController.setNoteLength(value);
     io.sockets.emit('set notelength', { notelength: value });
+  });
+
+  socket.on('change density', function(value) {
+    musicController.setDensity(value);
+    io.sockets.emit('set density', {density: musicController.getDensity()});
   });
 
   socket.on('get time', function(){
@@ -201,6 +222,10 @@ io.on('connection', function (socket) {
       });
     } else if (socket.handshake.session.lastPage === '/notelength') {
       notelengthUsers = notelengthUsers.filter(function(id) {
+        return id !== socket.id;
+      });
+    } else if (socket.handshake.session.lastPage === '/density') {
+      densityUsers = densityUsers.filter(function(id) {
         return id !== socket.id;
       });
     }

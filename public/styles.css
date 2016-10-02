@@ -34,7 +34,7 @@ body {
   background-color: #3A86FF;
 }
 
-.slider-container {
+.slider-container, .density-slider-container {
   width: 100%;
   height: 100%;
   display: flex;
@@ -42,7 +42,7 @@ body {
   align-items: center;
 }
 
-.slider {
+.slider, .density-slider {
   width: 300px;
 }
 
@@ -187,4 +187,28 @@ input[type=range]:focus::-ms-fill-lower {
 }
 input[type=range]:focus::-ms-fill-upper {
     background: #ccc;
+}
+
+#slider::-webkit-slider-thumb {
+  background: #F17105;
+}
+
+#slider::-moz-range-thumb {
+  background: #F17105;
+}
+
+#slider::-ms-thumb {
+  background: #F17105;
+}
+
+#density-slider::-webkit-slider-thumb {
+  background: #E6C229;
+}
+
+#density-slider::-moz-range-thumb {
+  background: #E6C229;
+}
+
+#density-slider::-ms-thumb {
+  background: #E6C229;
 }
