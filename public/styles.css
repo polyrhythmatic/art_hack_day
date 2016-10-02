@@ -188,3 +188,27 @@ input[type=range]:focus::-ms-fill-lower {
 input[type=range]:focus::-ms-fill-upper {
     background: #ccc;
 }
+
+#slider::-webkit-slider-thumb {
+  background: #F17105;
+}
+
+#slider::-moz-range-thumb {
+  background: #F17105;
+}
+
+#slider::-ms-thumb {
+  background: #F17105;
+}
+
+#density-slider::-webkit-slider-thumb {
+  background: #E6C229;
+}
+
+#density-slider::-moz-range-thumb {
+  background: #E6C229;
+}
+
+#density-slider::-ms-thumb {
+  background: #E6C229;
+}
