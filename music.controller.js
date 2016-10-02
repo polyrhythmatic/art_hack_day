@@ -31,6 +31,9 @@ function MusicController() {
 
   this.tMode = "above";
   this.noteLength = 250;
+
+  this.density = 1;
+  this.densityPosition = 0;
 }
 
 MusicController.scale = function(note) {
@@ -56,6 +59,8 @@ MusicController.prototype.handleMidiEvent = function(deltaTime, message) {
 MusicController.prototype.handleTouchEvent = function() {
   cv.sendMessage([147, this.mVoice, 0]);
   cv.sendMessage([146, this.tVoice, 0]);
+
+  this.densityPosition += 1;
   //for alternating, need to figure out whether it's above or below here
   var alternatingMode;
   if (this.tMode === "alternating") {
@@ -118,11 +123,17 @@ MusicController.prototype.handleTouchEvent = function() {
   }.bind(this, this.mVoice), this.noteLength);
   console.log(this.mVoice);
 
-  cv.sendMessage([146, this.tVoice, 1]);
-  this.tOff = setTimeout(function(note){
-    cv.sendMessage([146, note, 0]);
-  }.bind(this, this.tVoice), this.noteLength);
-  console.log(this.tVoice);
+  console.log("density: ", this.density);
+  console.log("density position: ", this.densityPosition);
+  if (this.density <= this.densityPosition) {
+    console.log('density and postiion are equal');
+    cv.sendMessage([146, this.tVoice, 1]);
+    this.tOff = setTimeout(function(note){
+      cv.sendMessage([146, note, 0]);
+    }.bind(this, this.tVoice), this.noteLength);
+    console.log(this.tVoice);
+    this.densityPosition = 0;
+  }
 };
 
 MusicController.prototype.changeMelodyPattern = function() {
@@ -152,6 +163,15 @@ MusicController.prototype.getSelectedMPattern = function() {
 
 MusicController.prototype.getNoteLength = function() {
   return this.noteLength;
+}
+
+MusicController.prototype.setDensity = function(value) {
+  console.log('new density: ', value);
+  this.density = value;
+}
+
+MusicController.prototype.getDensity = function() {
+  return this.density;
 }
 
 module.exports = new MusicController();

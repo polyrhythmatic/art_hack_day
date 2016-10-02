@@ -34,7 +34,7 @@ body {
   background-color: #3A86FF;
 }
 
-.slider-container {
+.slider-container, .density-slider-container {
   width: 100%;
   height: 100%;
   display: flex;
@@ -42,7 +42,7 @@ body {
   align-items: center;
 }
 
-.slider {
+.slider, .density-slider {
   width: 300px;
 }
 
