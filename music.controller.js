@@ -52,6 +52,8 @@ MusicController.prototype.handleMidiEvent = function(deltaTime, message) {
 };
 
 MusicController.prototype.handleTouchEvent = function() {
+  cv.sendMessage([147, this.mVoice, 0]);
+  cv.sendMessage([146, this.tVoice, 0]);
   //for alternating, need to figure out whether it's above or below here
   var alternatingMode;
   if (this.tMode === "alternating") {
