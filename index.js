@@ -129,6 +129,7 @@ io.on('connection', function (socket) {
   } else if (socket.handshake.session.lastPage === '/mpattern') {
     mpatternUsers.push(socket.id);
   } else if (socket.handshake.session.lastPage === '/tpattern') {
+    socket.emit('set tpattern', { patternIndex: musicController.getSelectedTPattern() });
     tpatternUsers.push(socket.id);
   } else if (socket.handshake.session.lastPage === '/notelength') {
     notelengthUsers.push(socket.id);
@@ -146,6 +147,7 @@ io.on('connection', function (socket) {
 
   socket.on('change t-voice mode', function() {
     musicController.changeTVoicePattern();
+    socket.emit('set tpattern', {patternIndex: musicController.getSelectedTPattern()});
   });
 
   socket.on('change note length', function(value) {

@@ -124,11 +124,13 @@ MusicController.prototype.handleTouchEvent = function() {
 };
 
 MusicController.prototype.changeMelodyPattern = function() {
+  console.log('changing melody pattern');
   this.currentPattern = (this.currentPattern + 1) % this.mPatterns.length;
   this.pattern = this.mPatterns[this.currentPattern];
 };
 
 MusicController.prototype.changeTVoicePattern = function() {
+  console.log('changing tvoice pattern');
   this.tMode = this.tModes[(this.tModes.indexOf(this.tMode) + 1) % this.tModes.length];
   console.log(this.tMode);
 };
@@ -136,6 +138,10 @@ MusicController.prototype.changeTVoicePattern = function() {
 MusicController.prototype.setNoteLength = function(value) {
   console.log('setting note length', value);
   this.noteLength = value;
+}
+
+MusicController.prototype.getSelectedTPattern = function() {
+  return this.tModes.indexOf(this.tMode);
 }
 
 module.exports = new MusicController();
