@@ -127,11 +127,13 @@ io.on('connection', function (socket) {
   } else if (socket.handshake.session.lastPage === '/progression') {
     progressionUsers.push(socket.id);
   } else if (socket.handshake.session.lastPage === '/mpattern') {
+    socket.broadcast.emit('set mpattern', { patternIndex: musicController.getSelectedMPattern() });
     mpatternUsers.push(socket.id);
   } else if (socket.handshake.session.lastPage === '/tpattern') {
-    socket.emit('set tpattern', { patternIndex: musicController.getSelectedTPattern() });
+    socket.broadcast.emit('set tpattern', { patternIndex: musicController.getSelectedTPattern() });
     tpatternUsers.push(socket.id);
   } else if (socket.handshake.session.lastPage === '/notelength') {
+    socket.broadcast.emit('set notelength', { notelength: musicController.getNoteLength() });
     notelengthUsers.push(socket.id);
   }
 
@@ -143,15 +145,17 @@ io.on('connection', function (socket) {
 
   socket.on('change melody pattern', function() {
     musicController.changeMelodyPattern();
+    socket.broadcast.emit('set mpattern', {patternIndex: musicController.getSelectedMPattern()});
   });
 
   socket.on('change t-voice mode', function() {
     musicController.changeTVoicePattern();
-    socket.emit('set tpattern', {patternIndex: musicController.getSelectedTPattern()});
+    socket.broadcast.emit('set tpattern', {patternIndex: musicController.getSelectedTPattern()});
   });
 
   socket.on('change note length', function(value) {
     musicController.setNoteLength(value);
+    socket.broadcast.emit('set notelength', { notelength: value });
   });
 
   socket.on('disconnect', function() {

@@ -1,6 +1,11 @@
 var socket = io();
 
 var mpatternButton = document.getElementById('mpattern');
+var mpatternOptions = document.getElementById('mpattern-options');
+
+socket.on('set mpattern', function(data) {
+  mpatternOptions.className = "mpattern-options pattern-" + data.patternIndex;
+});
 
 mpattern.ontouchstart = function(event) {
   event.stopPropagation();

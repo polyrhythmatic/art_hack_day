@@ -144,4 +144,12 @@ MusicController.prototype.getSelectedTPattern = function() {
   return this.tModes.indexOf(this.tMode);
 }
 
+MusicController.prototype.getSelectedMPattern = function() {
+  return this.currentPattern;
+};
+
+MusicController.prototype.getNoteLength = function() {
+  return this.noteLength;
+}
+
 module.exports = new MusicController();
