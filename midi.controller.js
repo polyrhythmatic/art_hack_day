@@ -9,6 +9,7 @@
 var midi = require("midi");
 var oxygen = new midi.input();
 var cv = new midi.output();
+var oxygenOut = new midi.output();
 
 midi.input.prototype.openPortByName = function(name){
   for(var i = 0; i < this.getPortCount(); i ++){
@@ -41,5 +42,6 @@ midi.output.prototype.openPortByName = function(name){
 
 module.exports = {
   cv: cv,
-  oxygen: oxygen
+  oxygen: oxygen,
+  oxygenOut: oxygenOut
 };

@@ -4,6 +4,7 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
 var oxygen = require('./midi.controller.js').oxygen;
+var oxygenOut = require('./midi.controller.js').oxygenOut;
 var cv = require('./midi.controller.js').cv;
 var musicController = require('./music.controller.js');
 
@@ -11,6 +12,7 @@ var userConnections = [];
 
 oxygen.openPortByName("USB Oxygen 8 v2");
 cv.openPortByName("CVpal");
+oxygenOut.openPortByName("USB Oxygen 8 v2");
 
 oxygen.on('message', musicController.handleMidiEvent);
 
@@ -47,6 +49,12 @@ io.on('connection', function (socket) {
     musicController.setNoteLength(value);
   });
 
+  socket.on('get time', function(){
+    socket.emit('current time', {
+      time: getTime()
+    });
+  });
+
   socket.on('disconnect', function() {
     console.log('disconnected', socket.id);
     userConnections = userConnections.filter(function(id) {
@@ -55,3 +63,7 @@ io.on('connection', function (socket) {
   });
 });
 
+function getTime(){
+  var d = new Date();
+  return d.getTime();
+}

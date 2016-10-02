@@ -1,5 +1,6 @@
 var cv = require('./midi.controller.js').cv;
 var oxygen = require('./midi.controller.js').oxygen;
+var oxygenOut = require('./midi.controller.js').oxygenOut;
 
 function MusicController() {
   // this.rootNote = -1;
@@ -37,11 +38,12 @@ MusicController.scale = function(note) {
 }
 
 MusicController.prototype.handleMidiEvent = function(deltaTime, message) {
+  oxygenOut.sendMessage(message);
   if(message[2] != 0 && message[1] != this.lastRoot){
-    this.rootDirection = message[1] > rootNote ? 1 : -1;
+    this.rootDirection = message[1] > this.rootNote ? 1 : -1;
     this.lastRoot = this.rootNote;
     this.rootNote = message[1];
-    var interval = rootNote - lastRoot;
+    var interval = this.rootNote - this.lastRoot;
     this.lastRoot = message[1];
     console.log(interval);
 
