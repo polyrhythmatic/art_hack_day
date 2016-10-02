@@ -39,3 +39,13 @@ bottomButton.ontouchstart = function(event) {
 slider.onchange = function(event) {
   socket.emit("change note length", event.target.value);
 }
+
+// if (window.location !== "http://localhost:8080/test") {
+//   window.location = "http://localhost:8080/test";
+// }
+
+// if (window.location.pathname === "/") {
+//   window.location.pathname = "/test";
+// }
+
+//window.location.pathname
