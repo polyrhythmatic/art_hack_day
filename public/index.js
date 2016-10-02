@@ -36,6 +36,6 @@ bottomButton.ontouchstart = function(event) {
   socket.emit("touch");
 }
 
-slider.oninput = function(event) {
+slider.onchange = function(event) {
   socket.emit("change note length", event.target.value);
 }
