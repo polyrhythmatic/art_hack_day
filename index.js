@@ -39,6 +39,10 @@ io.on('connection', function (socket) {
     musicController.changeTVoicePattern();
   });
 
+  socket.on('change note length', function(value) {
+    musicController.setNoteLength(value);
+  });
+
   socket.on('disconnect', function() {
     console.log('disconnected', socket.id);
     userConnections = userConnections.filter(function(id) {
