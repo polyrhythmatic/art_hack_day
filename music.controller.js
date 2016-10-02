@@ -43,6 +43,7 @@ MusicController.prototype.handleMidiEvent = function(deltaTime, message) {
     this.rootDirection = message[1] > this.rootNote ? 1 : -1;
     this.lastRoot = this.rootNote;
     this.rootNote = message[1];
+    console.log("new root note: " + this.rootNote);
     var interval = this.rootNote - this.lastRoot;
     this.lastRoot = message[1];
     console.log(interval);
