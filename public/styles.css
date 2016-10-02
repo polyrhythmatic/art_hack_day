@@ -16,13 +16,19 @@ body {
 }
 
 .top {
-  height: 50%;
+  height: 33.333%;
   width: 100%;
   background-color: #FF0063;
 }
 
+.middle {
+  height: 33.333%;
+  width: 100%;
+  background-color: #833AEC;
+}
+
 .bottom {
-  height: 50%;
+  height: 33.333%;
   width: 100%;
   background-color: #3A86FF;
 }

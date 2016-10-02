@@ -35,6 +35,10 @@ io.on('connection', function (socket) {
     musicController.changeMelodyPattern();
   });
 
+  socket.on('change t-voice mode', function() {
+    musicController.changeTVoicePattern();
+  });
+
   socket.on('disconnect', function() {
     console.log('disconnected', socket.id);
     userConnections = userConnections.filter(function(id) {

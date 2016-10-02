@@ -34,7 +34,7 @@ function MusicController() {
     "alternating"
   ];
 
-  this.tMode = "below";
+  this.tMode = "above";
 }
 
 MusicController.scale = function(note) {
@@ -145,6 +145,11 @@ MusicController.prototype.handleTouchEvent = function() {
 MusicController.prototype.changeMelodyPattern = function() {
   this.currentPattern = (this.currentPattern + 1) % this.mPatterns.length;
   this.pattern = this.mPatterns[this.currentPattern];
+};
+
+MusicController.prototype.changeTVoicePattern = function() {
+  this.tMode = this.tModes[(this.tModes.indexOf(this.tMode) + 1) % this.tModes.length];
+  console.log(this.tMode);
 };
 
 module.exports = new MusicController();
