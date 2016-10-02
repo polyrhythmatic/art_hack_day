@@ -33,7 +33,7 @@ function MusicController() {
 }
 
 MusicController.scale = function(note) {
-  return (note % 12) + 48;
+  return (note % 36) + 48;
 }
 
 MusicController.prototype.handleMidiEvent = function(deltaTime, message) {
