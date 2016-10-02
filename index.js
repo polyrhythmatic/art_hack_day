@@ -21,6 +21,10 @@ app.get('/', function (req, res) {
   res.sendfile(__dirname + '/index.html');
 });
 
+app.get('/phoneplayer', function (req, res) {
+  res.sendfile(__dirname + '/phoneplayer.html');
+});
+
 io.on('connection', function (socket) {
   console.log('connection', socket.id);
   userConnections.push(socket.id);
