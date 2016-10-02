@@ -12,8 +12,7 @@ function MusicController() {
   this.patternPosition = 0;
   this.mVoice = -1;
   this.tVoice = -1;
-  this.tVoicePattern = [3, 4, 5];
-  this.tVoicePatternPosition = 0;
+
   this.mOff = 0;
   this.tOff = 0;
 
@@ -23,11 +22,6 @@ function MusicController() {
     [-2, 1]
   ];
 
-  this.tPatterns = [
-    [3, 4, 5],
-    [-3, -5, -4],
-  ];
-
   this.tModes = [
     "above",
     "below",
@@ -35,6 +29,7 @@ function MusicController() {
   ];
 
   this.tMode = "above";
+  this.noteLength = 250;
 }
 
 MusicController.scale = function(note) {
@@ -53,7 +48,6 @@ MusicController.prototype.handleMidiEvent = function(deltaTime, message) {
     this.mVoice = -1;
     this.tVoice = -1;
     this.patternPosition = 0;
-    this.tVoicePatternPosition = 0;
   }
 };
 
@@ -112,33 +106,18 @@ MusicController.prototype.handleTouchEvent = function() {
     }
   }
 
-
-
-  //tVoice
-  //assume above
-
-
-  // if (this.tVoice === -1) {
-  //   this.tVoice = this.rootNote + this.tVoicePattern[this.tVoicePatternPosition % this.tVoicePattern.length];
-  //   this.tVoicePatternPosition += 1;
-  // }
-  // if (this.mVoice % 12 === this.tVoice % 12) {
-  //   this.tVoice = this.tVoice + this.tVoicePattern[this.tVoicePatternPosition % this.tVoicePattern.length];
-  //   this.tVoicePatternPosition += 1;
-  // }
-
   // this.tVoice = MusicController.scale(this.tVoice);
 
   cv.sendMessage([147, this.mVoice, 1]);
   this.mOff = setTimeout(function(note){
     cv.sendMessage([147, note, 0]);
-  }.bind(this, this.mVoice), 250);
+  }.bind(this, this.mVoice), this.noteLength);
   console.log(this.mVoice);
 
   cv.sendMessage([146, this.tVoice, 1]);
   this.tOff = setTimeout(function(note){
     cv.sendMessage([146, note, 0]);
-  }.bind(this, this.tVoice), 250);
+  }.bind(this, this.tVoice), this.noteLength);
   console.log(this.tVoice);
 };
 
@@ -151,5 +130,10 @@ MusicController.prototype.changeTVoicePattern = function() {
   this.tMode = this.tModes[(this.tModes.indexOf(this.tMode) + 1) % this.tModes.length];
   console.log(this.tMode);
 };
+
+MusicController.prototype.setNoteLength = function(value) {
+  console.log('setting note length', value);
+  this.noteLength = value;
+}
 
 module.exports = new MusicController();
